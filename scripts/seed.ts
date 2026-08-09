@@ -5,12 +5,12 @@
  * to be set in your .env file.
  */
 import "dotenv/config";
-import mongoose from "mongoose";
+import mongoose, { type HydratedDocument } from "mongoose";
 import bcrypt from "bcryptjs";
 
-import User from "../src/models/User";
+import User, { type IUser } from "../src/models/User";
 import ClientProfile from "../src/models/ClientProfile";
-import Service from "../src/models/Service";
+import Service, { type IService } from "../src/models/Service";
 import ServiceRequest from "../src/models/ServiceRequest";
 import Project from "../src/models/Project";
 import Task from "../src/models/Task";
@@ -60,7 +60,7 @@ async function seed() {
   }
 
   // --- Services ---
-  const serviceDocs = [];
+  const serviceDocs: HydratedDocument<IService>[] = [];
   for (const s of SERVICES) {
     const slug = s.name.toLowerCase().replace(/\s+/g, "-");
     let doc = await Service.findOne({ slug });
@@ -69,7 +69,7 @@ async function seed() {
   }
 
   // --- Demo clients ---
-  const clientDocs = [];
+  const clientDocs: HydratedDocument<IUser>[] = [];
   for (const c of DEMO_CLIENTS) {
     let user = await User.findOne({ email: c.email });
     if (!user) {
