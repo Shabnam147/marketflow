@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   const admins = await User.find({ role: "admin" }).select("_id").lean();
   await Notification.insertMany(
     admins.map((admin) => ({
-      user: admin._id,
+      user: String(admin._id),
       type: "service_request_status_changed",
       title: "New service request",
       body: `${parsed.data.businessName} requested ${parsed.data.service}.`,
