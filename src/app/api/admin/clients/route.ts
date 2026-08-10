@@ -14,11 +14,11 @@ export async function GET() {
   await connectDB();
   const clients = await User.find({ role: "client" }).select("-passwordHash").sort({ createdAt: -1 }).lean();
   const profiles = await ClientProfile.find({ user: { $in: clients.map((c) => c._id) } }).lean();
-  const profileByUser = new Map(profiles.map((p) => [p.user.toString(), p]));
+const profileByUser = new Map(profiles.map((p) => [String(p.user), p]));
 
-  return NextResponse.json({
-    clients: clients.map((c) => ({ ...c, profile: profileByUser.get(c._id.toString()) || null })),
-  });
+return NextResponse.json({
+  clients: clients.map((c) => ({ ...c, profile: profileByUser.get(String(c._id)) || null })),
+});
 }
 
 const disableSchema = z.object({ userId: z.string(), isDisabled: z.boolean() });
