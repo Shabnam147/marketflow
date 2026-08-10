@@ -15,5 +15,5 @@ export async function GET() {
   const admin = await User.findOne({ role: "admin" }).select("_id fullName").lean();
   if (!admin) return NextResponse.json({ error: "No support account configured yet." }, { status: 404 });
 
-  return NextResponse.json({ id: admin._id, name: admin.fullName });
+  return NextResponse.json({ id: String(admin._id), name: admin.fullName });
 }
