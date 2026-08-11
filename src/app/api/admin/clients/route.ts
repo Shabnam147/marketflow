@@ -12,8 +12,22 @@ export async function GET() {
   }
 
   await connectDB();
-  const clients = await User.find({ role: "client" }).select("-passwordHash").sort({ createdAt: -1 }).lean();
-  const profiles = await ClientProfile.find({ user: { $in: clients.map((c) => String(c._id)) } }).lean();
+  type LeanClient = {
+    _id: unknown;
+    fullName: string;
+    email: string;
+    companyName?: string;
+    phone?: string;
+    isDisabled: boolean;
+    createdAt: Date;
+  };
+  type LeanProfile = { user: unknown; onboardingCompleted: boolean; industry?: string };
+
+  const clients = await User.find({ role: "client" })
+    .select("-passwordHash")
+    .sort({ createdAt: -1 })
+    .lean<LeanClient[]>();
+  const profiles = await ClientProfile.find({ user: { $in: clients.map((c) => String(c._id)) } }).lean<LeanProfile[]>();
   const profileByUser = new Map(profiles.map((p) => [String(p.user), p]));
 
   return NextResponse.json({
