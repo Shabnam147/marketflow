@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Notify all admins of the new request.
-  const admins = await User.find({ role: "admin" }).select("_id").lean();
+  const admins = await User.find({ role: "admin" }).select("_id").lean<{ _id: unknown }[]>();
   await Notification.insertMany(
     admins.map((admin) => ({
       user: String(admin._id),
