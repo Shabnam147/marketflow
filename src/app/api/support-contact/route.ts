@@ -12,7 +12,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await connectDB();
-  const admin = await User.findOne({ role: "admin" }).select("_id fullName").lean();
+  const admin = await User.findOne({ role: "admin" }).select("_id fullName").lean<{ _id: unknown; fullName: string }>();
   if (!admin) return NextResponse.json({ error: "No support account configured yet." }, { status: 404 });
 
   return NextResponse.json({ id: String(admin._id), name: admin.fullName });
