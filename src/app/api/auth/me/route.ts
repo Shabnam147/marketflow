@@ -8,7 +8,13 @@ export async function GET() {
   if (!session) return NextResponse.json({ user: null }, { status: 200 });
 
   await connectDB();
-  const user = await User.findById(session.userId).lean();
+  const user = await User.findById(session.userId).lean<{
+    _id: unknown;
+    fullName: string;
+    email: string;
+    role: "client" | "admin" | "employee";
+    avatarUrl?: string;
+  }>();
   if (!user) return NextResponse.json({ user: null }, { status: 200 });
 
   return NextResponse.json({
